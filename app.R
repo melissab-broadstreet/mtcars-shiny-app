@@ -1,9 +1,11 @@
 # Load Shiny
 library(shiny)
+library(ggplot2)
+library(ggbernie)
 
 # UI
 ui <- fluidPage(
-  titlePanel("mtcars Scatterplot"),
+  titlePanel("mtcars Bernie Sanders Scatterplot"),
   
   sidebarLayout(
     sidebarPanel(
@@ -12,9 +14,7 @@ ui <- fluidPage(
                   selected = "wt"),
       selectInput("yvar", "Y-axis:",
                   choices = names(mtcars),
-                  selected = "mpg"),
-      checkboxInput("colourByCyl", "Colour by cylinders (cyl)", TRUE),
-      sliderInput("ptsize", "Point size:", min = 1, max = 6, value = 3, step = 0.5)
+                  selected = "mpg")
     ),
     mainPanel(
       plotOutput("scatterPlot")
@@ -27,23 +27,13 @@ server <- function(input, output) {
   output$scatterPlot <- renderPlot({
     x <- mtcars[[input$xvar]]
     y <- mtcars[[input$yvar]]
-    
-    if (input$colourByCyl) {
-      cols <- as.numeric(as.factor(mtcars$cyl))
-      plot(x, y,
-           col = cols, pch = 19, cex = input$ptsize,
-           xlab = input$xvar, ylab = input$yvar,
-           main = paste("mtcars:", input$yvar, "vs", input$xvar))
-      legend("topright",
-             legend = levels(as.factor(mtcars$cyl)),
-             col = seq_along(levels(as.factor(mtcars$cyl))),
-             pch = 19, title = "cyl")
-    } else {
-      plot(x, y,
-           pch = 19, cex = input$ptsize,
-           xlab = input$xvar, ylab = input$yvar,
-           main = paste("mtcars:", input$yvar, "vs", input$xvar))
-    }
+
+    ggplot(mtcars, aes(!!sym(input$xvar), !!sym(input$yvar))) +
+      geom_bernie(bernie = "sitting") +
+      xlab(input$xvar) +
+      ylab(input$yvar) +
+      ggtitle(paste("mtcars:", input$yvar, "vs", input$xvar)) +
+      theme_minimal()
   })
 }
 

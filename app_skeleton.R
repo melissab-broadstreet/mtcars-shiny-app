@@ -1,30 +1,30 @@
+# SHINY APP SKELETON -----------------------------------------------------------
+# Fill in the missing code chunks with your code!
+
 # Load Shiny
 library(shiny)
+library(ggplot2)
+library(ggbernie)
 
 # UI
 ui <- fluidPage(
-  # 1. Add a titlePanel here with your app's title
-  # Use an ID that corresponds to the IDs you can see in the server
+  # 1. Add a titlePanel for a title for your Shiny app
   # YOUR CODE HERE
   
   sidebarLayout(
     sidebarPanel(
-      # 2. Add a selectInput here to choose the x-axis variable
-      # Use an ID that corresponds to the IDs you can see in the server
+      # 2. Add a selectInput for your x-axis variable
+      # Hint: Look at the ID used in the server and make sure your ID matches
       # YOUR CODE HERE
       
-      # 3. Add a selectInput here to choose the y-axis variable
-      # Use an ID that corresponds to the IDs you can see in the server
+      # 3. Add a selectInput for your y-axis variable
+      # Hint: Look at the ID used in the server and make sure your ID matches
       # YOUR CODE HERE
-      
-      # 4. Add a checkbox here to colour your plot by cylinders
-      # Use an ID that corresponds to the IDs you can see in the server
-      # YOUR CODE HERE
-      
-      sliderInput("ptsize", "Point size:", min = 1, max = 6, value = 3, step = 0.5)
     ),
     mainPanel(
-      plotOutput("scatterPlot")
+      # 4. Add a plotOutput for your plot
+      # Hint: Look at the ID used in the server and make sure your ID matches
+      # YOUR CODE HERE
     )
   )
 )
@@ -35,22 +35,12 @@ server <- function(input, output) {
     x <- mtcars[[input$xvar]]
     y <- mtcars[[input$yvar]]
     
-    if (input$colourByCyl) {
-      cols <- as.numeric(as.factor(mtcars$cyl))
-      plot(x, y,
-           col = cols, pch = 19, cex = input$ptsize,
-           xlab = input$xvar, ylab = input$yvar,
-           main = paste("mtcars:", input$yvar, "vs", input$xvar))
-      legend("topright",
-             legend = levels(as.factor(mtcars$cyl)),
-             col = seq_along(levels(as.factor(mtcars$cyl))),
-             pch = 19, title = "cyl")
-    } else {
-      plot(x, y,
-           pch = 19, cex = input$ptsize,
-           xlab = input$xvar, ylab = input$yvar,
-           main = paste("mtcars:", input$yvar, "vs", input$xvar))
-    }
+    ggplot(mtcars, aes(!!sym(input$xvar), !!sym(input$yvar))) +
+      geom_bernie(bernie = "sitting") +
+      xlab(input$xvar) +
+      ylab(input$yvar) +
+      ggtitle(paste("mtcars:", input$yvar, "vs", input$xvar)) +
+      theme_minimal()
   })
 }
 
