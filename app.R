@@ -28,7 +28,7 @@ server <- function(input, output) {
     x <- mtcars[[input$xvar]]
     y <- mtcars[[input$yvar]]
 
-    ggplot(mtcars, aes(!!sym(input$xvar), !!sym(input$yvar))) +
+    ggplot(mtcars, aes_string(input$xvar, input$yvar)) +
       geom_bernie(bernie = "sitting") +
       xlab(input$xvar) +
       ylab(input$yvar) +
